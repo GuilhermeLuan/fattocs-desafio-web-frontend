@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <title>Lista de Tarefas</title>
+</head>
+<body>
+    
+    <main> 
+
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tarefa</th>
+                    <th>Limite</th>
+                    <th>Custo</th>
+                    <th>Ações</th>
+                </tr>
+
+                <tbody>
+                    <tr>
+                        <td>Título da Task</td>
+                        <td>00 de Janeiro de 2024</td>
+                        <td>R$ 100.00</td>
+                        <td>
+
+                            <button class="btn-action">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+
+                            <button class="btn-action">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </thead>
+        </table>
+
+        <form class="add-form">
+            <input type="text" placeholder="Adicionar tarefa" class="input-task">
+            <button type="submit">+</button>
+        </form>
+
+    </main>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
