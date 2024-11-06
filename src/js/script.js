@@ -1,12 +1,13 @@
+const URL = 'https://fattocs-desafio.up.railway.app/v1/tasks';
+
 const tbody = document.querySelector('tbody');
 const addForm = document.querySelector('.add-form');
 const inputTask = document.querySelector('.input-task');
 const inputDate = document.querySelector('.input-date');
 const inputCost = document.querySelector('.input-cost');
 
-
 const fetchTask = async () => {
-    const response = await fetch('http://localhost:8080/v1/tasks');
+    const response = await fetch(URL);
     const tasks = await response.json();
     return tasks;
 }
@@ -33,7 +34,7 @@ const addTask = async (event) => {
         dataLimit: inputDate.value
     }
 
-    await fetch('http://localhost:8080/v1/tasks', {
+    await fetch(URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(task),
@@ -47,14 +48,14 @@ const addTask = async (event) => {
 }
 
 const deleteTask = async (id) => {
-    await fetch(`http://localhost:8080/v1/tasks/${id}`, {
+    await fetch(`${URL}/${id}`, {
         method: 'DELETE',
     });
     loadTask();
 }
 
 const updateTask = async ({ id, taskName, cost, dataLimit }) => {
-    await fetch(`http://localhost:8080/v1/tasks`, {
+    await fetch(URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, taskName, cost, dataLimit }),
@@ -130,7 +131,6 @@ const createRow = (task) => {
 
     return tr;
 }
-
 
 const loadTask = async () => {
     const tasks = await fetchTask();
