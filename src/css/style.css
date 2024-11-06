@@ -4,7 +4,7 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: 0;
+    box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -93,6 +93,5 @@ tr:nth-child(even){
 
 .btn-action:nth-child(2){
     background-color: rgba(237, 42, 42, 0.9);
-    margin-right: 5px;
 }
 
