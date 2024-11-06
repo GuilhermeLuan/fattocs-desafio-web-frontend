@@ -1,6 +1,9 @@
 const tbody = document.querySelector('tbody');
 const addForm = document.querySelector('.add-form');
 const inputTask = document.querySelector('.input-task');
+const inputDate = document.querySelector('.input-date');
+const inputCost = document.querySelector('.input-cost');
+
 
 const fetchTask = async () => {
     const response = await fetch('http://localhost:8080/v1/tasks');
@@ -26,8 +29,8 @@ const addTask = async (event) => {
 
     const task = {
         taskName: inputTask.value,
-        cost: 120,
-        dataLimit: "2024-11-10"
+        cost: parseFloat(inputCost.value),
+        dataLimit: inputDate.value
     }
 
     await fetch('http://localhost:8080/v1/tasks', {
@@ -37,7 +40,10 @@ const addTask = async (event) => {
     });
 
     loadTask();
+
     inputTask.value = '';
+    inputDate.value = '';
+    inputCost.value = '';
 }
 
 const deleteTask = async (id) => {
@@ -61,13 +67,11 @@ const createRow = (task) => {
 
     const tr = createElement('tr');
     
-    // Cria colunas (células)
     const tdTaskName = createElement('td', taskName);
     const tdDataLimit = createElement('td', formatDate(dataLimit));
     const tdCost = createElement('td', cost);
     const tdActions = createElement('td');
 
-    // Botões de ação
     const editButton = createElement('button', '', '<span class="material-symbols-outlined">edit</span>');
     const deleteButton = createElement('button', '', '<span class="material-symbols-outlined">delete</span>');
 
