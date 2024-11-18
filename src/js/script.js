@@ -67,7 +67,11 @@ const createRow = (task) => {
     const { id, taskName, cost, dataLimit } = task;
 
     const tr = createElement('tr');
-    
+
+    if (cost > 1000) {
+        tr.classList.add('high-cost'); // Garante que todos os elementos acima do limite tenham a classe
+    }
+
     const tdTaskName = createElement('td', taskName);
     const tdDataLimit = createElement('td', formatDate(dataLimit));
     const tdCost = createElement('td', cost);
@@ -118,7 +122,7 @@ const createRow = (task) => {
     deleteButton.addEventListener('click', () => {
         Swal.fire({
             title: 'Tem certeza?',
-            text: 'Deseja realmente excluir a tarefa?',
+            text: 'Deseja realmente excluir o projeto?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -128,15 +132,10 @@ const createRow = (task) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteTask(id);
-                Swal.fire(
-                    'Excluído!',
-                    'A tarefa foi excluída com sucesso.',
-                    'success'
-                );
+                Swal.fire('Excluído!', 'O projeto foi excluído com sucesso.', 'success');
             }
         });
     });
-    
 
     editButton.classList.add('btn-action');
     saveButton.classList.add('btn-action');
@@ -151,7 +150,8 @@ const createRow = (task) => {
     tr.appendChild(tdActions);
 
     return tr;
-}
+};
+
 
 const loadTask = async () => {
     const tasks = await fetchTask();
