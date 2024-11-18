@@ -1,4 +1,4 @@
-const URL = 'https://fattocs-desafio.up.railway.app/v1/tasks';
+const URL = 'http://localhost:8080/v1/tasks';
 
 const tbody = document.querySelector('tbody');
 const addForm = document.querySelector('.add-form');
@@ -115,7 +115,28 @@ const createRow = (task) => {
         tdActions.appendChild(editForm);
     });
 
-    deleteButton.addEventListener('click', () => { deleteTask(id) });
+    deleteButton.addEventListener('click', () => {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Deseja realmente excluir a tarefa?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteTask(id);
+                Swal.fire(
+                    'Excluído!',
+                    'A tarefa foi excluída com sucesso.',
+                    'success'
+                );
+            }
+        });
+    });
+    
 
     editButton.classList.add('btn-action');
     saveButton.classList.add('btn-action');
