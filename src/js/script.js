@@ -31,21 +31,51 @@ const addTask = async (event) => {
     const task = {
         taskName: inputTask.value,
         cost: parseFloat(inputCost.value),
-        dataLimit: inputDate.value
+        dataLimit: inputDate.value,
+    };
+
+    try {
+        const response = await fetch(URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao cadastrar Tarefa',
+                text: errorData.message || "Ocorreu um erro ao criar a task.",
+                confirmButtonColor: '#c8a2c8', // Cor personalizada do botão
+            });
+
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Tarefa Criada!',
+            text: 'Sua Tarefa foi adicionada com sucesso.',
+            confirmButtonColor: '#c8a2c8',
+        });
+
+        loadTask();
+
+        inputTask.value = '';
+        inputDate.value = '';
+        inputCost.value = '';
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro de Conexão',
+            text: 'Não foi possível conectar ao servidor. Tente novamente mais tarde.',
+            confirmButtonColor: '#c8a2c8',
+        });
     }
-
-    await fetch(URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task),
-    });
-
-    loadTask();
-
-    inputTask.value = '';
-    inputDate.value = '';
-    inputCost.value = '';
-}
+};
 
 const deleteTask = async (id) => {
     await fetch(`${URL}/${id}`, {
@@ -72,6 +102,7 @@ const createRow = (task) => {
         tr.classList.add('high-cost'); // Garante que todos os elementos acima do limite tenham a classe
     }
 
+    const tdIdTask = createElement('td', id);
     const tdTaskName = createElement('td', taskName);
     const tdDataLimit = createElement('td', formatDate(dataLimit));
     const tdCost = createElement('td', cost);
@@ -144,6 +175,7 @@ const createRow = (task) => {
     tdActions.appendChild(editButton);
     tdActions.appendChild(deleteButton);
 
+    tr.appendChild(tdIdTask);
     tr.appendChild(tdTaskName);
     tr.appendChild(tdDataLimit);
     tr.appendChild(tdCost);
