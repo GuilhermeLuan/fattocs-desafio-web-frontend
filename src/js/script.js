@@ -12,6 +12,19 @@ const fetchTask = async () => {
     return tasks;
 }
 
+const showAlert = (message, type) => {
+    const alertBox = document.createElement('div');
+    alertBox.innerText = message;
+    alertBox.className = `alert ${type}`; // Adiciona uma classe baseada no tipo (success ou error)
+
+    document.body.appendChild(alertBox);
+
+    // Remove o alerta após 3 segundos
+    setTimeout(() => {
+        alertBox.remove();
+    }, 3000);
+}
+
 const formatDate = (dateUTC) => {
     const options = { day: 'numeric', year: 'numeric', month: 'long' };
     const date = new Date(dateUTC).toLocaleDateString('pt-br', options);
@@ -43,24 +56,28 @@ const addTask = async (event) => {
 
         if (!response.ok) {
             const errorData = await response.json();
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao cadastrar Tarefa',
-                text: errorData.message || "Ocorreu um erro ao criar a task.",
-                confirmButtonColor: '#c8a2c8', // Cor personalizada do botão
-            });
-
+            if(errorData.message && errorData.message.includes("Task cost negative")){
+                showAlert("O custo da tarefa não pode ser negativo!", "error")
+            }
+            else if (errorData.message && errorData.message.includes("Task name already exists")) {
+                showAlert("Nome da tarefa já existe! Use outro nome.", "error")
+            }
+            else if (errorData.message && errorData.message.includes("The field 'taskName' is required")) {
+                showAlert("Por favor insira o nome da tarefa.", "error")
+            }
+            else if (errorData.message && errorData.message.includes("The field 'cost' is required")) {
+                showAlert("Por favor insira o custo da tarefa.", "error")
+            } 
+            else if (errorData.message && errorData.message.includes("The field 'dataLimit' is required")) {
+                showAlert("Por favor insira a data da tarefa.", "error")
+            }   
+            else {
+                showAlert("Ocorreu um erro ao tentar cadastrar a tarefa!", "error");
+            }
             return;
         }
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Tarefa Criada!',
-            text: 'Sua Tarefa foi adicionada com sucesso.',
-            confirmButtonColor: '#c8a2c8',
-        });
-
+        showAlert("Tarefa cadastrar com sucesso!", "success");
         loadTask();
 
         inputTask.value = '';
@@ -68,12 +85,8 @@ const addTask = async (event) => {
         inputCost.value = '';
 
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro de Conexão',
-            text: 'Não foi possível conectar ao servidor. Tente novamente mais tarde.',
-            confirmButtonColor: '#c8a2c8',
-        });
+        console.error(error);
+        showAlert("Erro inesperado.", "error");
     }
 };
 
@@ -84,13 +97,35 @@ const deleteTask = async (id) => {
     loadTask();
 }
 
+
 const updateTask = async ({ id, taskName, cost, dataLimit }) => {
-    await fetch(URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, taskName, cost, dataLimit }),
-    });
-    loadTask();
+    try {
+        const response = await fetch(URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, taskName, cost, dataLimit }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            if(errorData.message && errorData.message.includes("Task cost negative")){
+                showAlert("O custo da tarefa não pode ser negativo!", "error")
+            }
+            else if (errorData.message && errorData.message.includes("Task name already exists")) {
+                showAlert("Nome da tarefa já existe! Use outro nome.", "error")
+            } 
+            else {
+                showAlert("Ocorreu um erro ao tentar atualizar a tarefa!", "error");
+            }
+            return;
+        }
+
+        showAlert("Tarefa atualizada com sucesso!", "success");
+        loadTask(); // Atualiza a lista de tasks
+    } catch (error) {
+        console.error(error);
+        showAlert("Erro inesperado.", "error");
+    }
 }
 
 const createRow = (task) => {
