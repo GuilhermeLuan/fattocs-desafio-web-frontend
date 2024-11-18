@@ -12,6 +12,55 @@ const fetchTask = async () => {
     return tasks;
 }
 
+const handleTask = async (task, method) => {
+    try {
+        const response = await fetch(URL, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            handleTaskError(errorData.message); // Trata erros específicos
+            return;
+        }
+
+        const successMessage = method === 'POST' 
+            ? "Tarefa cadastrada com sucesso!" 
+            : "Tarefa atualizada com sucesso!";
+        showAlert(successMessage, "success");
+        loadTask(); // Atualiza a lista de tasks
+
+        // Limpa os inputs apenas para o POST
+        if (method === 'POST') {
+            inputTask.value = '';
+            inputDate.value = '';
+            inputCost.value = '';
+        }
+    } catch (error) {
+        console.error(error);
+        showAlert("Erro inesperado.", "error");
+    }
+};
+
+// Trata mensagens de erro com base na resposta do back-end
+const handleTaskError = (message) => {
+    if (message.includes("Task cost negative")) {
+        showAlert("O custo da tarefa não pode ser negativo!", "error");
+    } else if (message.includes("Task name already exists")) {
+        showAlert("Nome da tarefa já existe! Use outro nome.", "error");
+    } else if (message.includes("The field 'taskName' is required")) {
+        showAlert("Por favor insira o nome da tarefa.", "error");
+    } else if (message.includes("The field 'cost' is required")) {
+        showAlert("Por favor insira o custo da tarefa.", "error");
+    } else if (message.includes("The field 'dataLimit' is required")) {
+        showAlert("Por favor insira a data da tarefa.", "error");
+    } else {
+        showAlert("Ocorreu um erro ao processar a tarefa!", "error");
+    }
+};
+
 const showAlert = (message, type) => {
     const alertBox = document.createElement('div');
     alertBox.innerText = message;
@@ -47,47 +96,7 @@ const addTask = async (event) => {
         dataLimit: inputDate.value,
     };
 
-    try {
-        const response = await fetch(URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(task),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            if(errorData.message && errorData.message.includes("Task cost negative")){
-                showAlert("O custo da tarefa não pode ser negativo!", "error")
-            }
-            else if (errorData.message && errorData.message.includes("Task name already exists")) {
-                showAlert("Nome da tarefa já existe! Use outro nome.", "error")
-            }
-            else if (errorData.message && errorData.message.includes("The field 'taskName' is required")) {
-                showAlert("Por favor insira o nome da tarefa.", "error")
-            }
-            else if (errorData.message && errorData.message.includes("The field 'cost' is required")) {
-                showAlert("Por favor insira o custo da tarefa.", "error")
-            } 
-            else if (errorData.message && errorData.message.includes("The field 'dataLimit' is required")) {
-                showAlert("Por favor insira a data da tarefa.", "error")
-            }   
-            else {
-                showAlert("Ocorreu um erro ao tentar cadastrar a tarefa!", "error");
-            }
-            return;
-        }
-
-        showAlert("Tarefa cadastrar com sucesso!", "success");
-        loadTask();
-
-        inputTask.value = '';
-        inputDate.value = '';
-        inputCost.value = '';
-
-    } catch (error) {
-        console.error(error);
-        showAlert("Erro inesperado.", "error");
-    }
+    await handleTask(task, 'POST');
 };
 
 const deleteTask = async (id) => {
@@ -98,35 +107,9 @@ const deleteTask = async (id) => {
 }
 
 
-const updateTask = async ({ id, taskName, cost, dataLimit }) => {
-    try {
-        const response = await fetch(URL, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, taskName, cost, dataLimit }),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            if(errorData.message && errorData.message.includes("Task cost negative")){
-                showAlert("O custo da tarefa não pode ser negativo!", "error")
-            }
-            else if (errorData.message && errorData.message.includes("Task name already exists")) {
-                showAlert("Nome da tarefa já existe! Use outro nome.", "error")
-            } 
-            else {
-                showAlert("Ocorreu um erro ao tentar atualizar a tarefa!", "error");
-            }
-            return;
-        }
-
-        showAlert("Tarefa atualizada com sucesso!", "success");
-        loadTask(); // Atualiza a lista de tasks
-    } catch (error) {
-        console.error(error);
-        showAlert("Erro inesperado.", "error");
-    }
-}
+const updateTask = async (task) => {
+    await handleTask(task, 'PUT');
+};
 
 const createRow = (task) => {
     const { id, taskName, cost, dataLimit } = task;
