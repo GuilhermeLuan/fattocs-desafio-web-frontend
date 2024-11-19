@@ -75,10 +75,10 @@ const showAlert = (message, type) => {
 }
 
 const formatDate = (dateUTC) => {
-    const options = { day: 'numeric', year: 'numeric', month: 'long' };
+    const options = { day: 'numeric', year: 'numeric', month: 'long', timeZone: 'UTC' };
     const date = new Date(dateUTC).toLocaleDateString('pt-br', options);
     return date;
-}
+};
 
 const createElement = (tag, innerText = '', innerHTML = '') => {
     const element = document.createElement(tag);
