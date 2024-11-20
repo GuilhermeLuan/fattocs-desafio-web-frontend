@@ -37,6 +37,7 @@ const handleTask = async (task, method) => {
             inputTask.value = '';
             inputDate.value = '';
             inputCost.value = '';
+            inputTask.focus();
         }
     } catch (error) {
         console.error(error);
@@ -56,7 +57,10 @@ const handleTaskError = (message) => {
         showAlert("Por favor insira o custo da tarefa.", "error");
     } else if (message.includes("The field 'dataLimit' is required")) {
         showAlert("Por favor insira a data da tarefa.", "error");
-    } else {
+    } else if (message.includes("The cost cannot be greater than 999999999999999.")){
+        showAlert("O custo não pode ser maior do que 999999999999999", "error")
+    }
+    else {
         showAlert("Ocorreu um erro ao processar a tarefa!", "error");
     }
 };
@@ -166,6 +170,8 @@ const createRow = (task) => {
 
         tdActions.innerHTML = '';
         tdActions.appendChild(editForm);
+
+        editInputTaskName.focus();
     });
 
     deleteButton.addEventListener('click', () => {
