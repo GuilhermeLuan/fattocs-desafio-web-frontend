@@ -60,6 +60,9 @@ const handleTaskError = (message) => {
     } else if (message.includes("The cost cannot be greater than 999999999999999.")){
         showAlert("O custo não pode ser maior do que 999999999999999", "error")
     }
+    else if (message.includes("The cost must be greater than 0.")){
+        showAlert("O custo tem que ser maior do que 0", "error")
+    }
     else {
         showAlert("Ocorreu um erro ao processar a tarefa!", "error");
     }
