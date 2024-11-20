@@ -1,4 +1,4 @@
-const URL = 'http://localhost:8080/v1/tasks';
+const URL = 'https://fattocs-desafio.up.railway.app/v1/tasks';
 
 const tbody = document.querySelector('tbody');
 const addForm = document.querySelector('.add-form');
